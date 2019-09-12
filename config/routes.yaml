@@ -1,0 +1,15 @@
+firstAuthorizationStep:
+    path: /
+    controller: App\Controller\BungieAuthorizationController::firstAuthorizationStep
+
+secondAuthorizationStep:
+    path: /authorization
+    controller: App\Controller\BungieAuthorizationController::secondAuthorizationStep
+
+reset:
+    path: /reset
+    controller: App\Controller\BungieAuthorizationController::reset
+
+clear:
+    path: /clear
+    controller: App\Controller\BungieAuthorizationController::reset
