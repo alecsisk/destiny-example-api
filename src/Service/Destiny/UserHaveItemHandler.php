@@ -2,29 +2,26 @@
 
 namespace App\Service\Destiny;
 
+use App\Lib\Api\Destiny\ApiClientInterface;
 use App\Lib\Api\Destiny\Domain\Profile\ProfileCollectibleData;
 use App\Lib\Api\Destiny\Enum\Components;
 use App\Lib\Api\Destiny\Enum\DestinyCollectibleState;
 use App\Lib\Api\Destiny\Exception\CollectiblesPrivacyException;
 use App\Lib\Api\Destiny\Handler\HandlerException;
 use App\Lib\Api\Destiny\Handler\Response\CheckCollectiblesPrivacy;
-use App\Lib\Api\Destiny\Method\GetProfile;
-use App\Lib\Api\Destiny\Method\SearchPlayer;
-use App\Lib\Api\Destiny\Response\ApiResponseInterface;
-use App\Service\Destiny\Api\DestinyApiService;
 use App\Utils\BitmaskUtil;
 use \Exception;
 
 class UserHaveItemHandler
 {
-    private $api;
+    private $client;
     private $nickname;
     private $itemId;
 
 
-    public function __construct(DestinyApiService $api)
+    public function __construct(ApiClientInterface $client)
     {
-        $this->api = $api;
+        $this->client = $client;
     }
 
     /**
@@ -40,9 +37,12 @@ class UserHaveItemHandler
         $this->itemId = $itemId;
         try {
             $player = $this->apiSearchOnePlayer($nickname);
-            $collectibles = $this->apiGetProfile($player['membershipType'], $player['membershipId'],
-                [Components::COLLECTIBLES]);
+
+            $collectibles = $this->client->getProfile($player['membershipType'], $player['membershipId'],
+                [Components::COLLECTIBLES])->getData();
+
             return $this->collectionContainItem($collectibles, $itemId);
+
         } catch (Exception $exception) {
             $this->handlerExceptionProcessing($exception);
         }
@@ -66,19 +66,6 @@ class UserHaveItemHandler
 
 
     /**
-     * @param string $membershipType
-     * @param string $membershipId
-     * @param array $components
-     * @throws HandlerException
-     */
-    private function apiGetProfile(string $membershipType, string $membershipId, array $components)
-    {
-        $getProfile = new GetProfile($membershipType, $membershipId, $components);
-        return $response = $this->api->execute($getProfile)->getData();
-    }
-
-
-    /**
      * @param string $nickname
      * @param bool $throwErrorMoreOnePlayer
      * @return array
@@ -86,7 +73,7 @@ class UserHaveItemHandler
      */
     private function apiSearchOnePlayer(string $nickname): array
     {
-        $response = $this->apiSearchPlayer($nickname)->getData();
+        $response = $this->client->searchPlayer($nickname)->getData();
         $responseCount = count($response);
 
         // TODO: в обработчики ответа?
@@ -100,18 +87,6 @@ class UserHaveItemHandler
 
         // first player data array
         return $response[0];
-    }
-
-
-    /**
-     * @param string $nickname
-     * @return ApiResponseInterface
-     * @throws HandlerException
-     */
-    private function apiSearchPlayer(string $nickname): ApiResponseInterface
-    {
-        $searchPlayer = new SearchPlayer($nickname);
-        return $this->api->execute($searchPlayer);
     }
 
 

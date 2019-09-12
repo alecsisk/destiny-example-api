@@ -27,10 +27,6 @@ services:
   # add more service definitions when explicit configuration is needed
   # please note that last definitions always *replace* previous ones
 
-  App\Service\Destiny\Api\DestinyApiService:
-    bind:
-      $maxErrorCount: '%env(string:API_MAX_ERRORS)%'
-
   App\Command\CheckUsersHaveItemCommand:
     bind:
       $itemId: '%env(string:APP_DESTINY_SEARCH_ITEM_ID)%'
@@ -49,9 +45,8 @@ services:
     bind:
       $fileName: '%env(string:APP_FILE_RESULTS)%'
 
-  App\Lib\Api\Destiny\ApiClient:
+  App\Lib\Api\Destiny\ApiClientInterface:
+    class: App\Service\Destiny\ApiClientDecorator
     bind:
       $apiKey: '%env(string:BUNGIE_API_KEY)%'
-
-  App\Service\Destiny\Api\ApiErrorHandlerService:
-    arguments: ['%env(string:API_MAX_ERRORS)%']
+      $apiMaxErrors: '%env(string:API_MAX_ERRORS)%'
