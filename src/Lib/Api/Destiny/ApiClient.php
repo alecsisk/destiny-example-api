@@ -6,7 +6,7 @@ use App\Lib\Api\Destiny\Creator\ResponseCreator;
 use App\Lib\Api\Destiny\Creator\RequestCreator;
 use App\Lib\Api\Destiny\Creator\RequestCreatorInterface;
 use App\Lib\Api\Destiny\Creator\ResponseCreatorInterface;
-use App\Lib\Api\Destiny\Handler\HandlerException;
+use App\Lib\Api\Destiny\Exception\ApiException;
 use App\Lib\Api\Destiny\Handler\Request\AuthorizationToken;
 use App\Lib\Api\Destiny\Handler\Request\FormRequestParameters;
 use App\Lib\Api\Destiny\Handler\Request\RequestHandlerManager;
@@ -14,11 +14,11 @@ use App\Lib\Api\Destiny\Handler\Response\Basic\CheckHttpStatus;
 use App\Lib\Api\Destiny\Handler\Response\Basic\JsonSerializer;
 use App\Lib\Api\Destiny\Handler\Response\DestinyResponseHandler;
 use App\Lib\Api\Destiny\Handler\Response\ResponseHandlerManager;
-use App\Lib\Api\Destiny\Method\GetProfile;
 use App\Lib\Api\Destiny\Method\MethodInterface;
 use App\Lib\Api\Destiny\Method\SearchPlayer;
 use App\Lib\Api\Destiny\Response\ApiResponseInterface;
 use App\Lib\Http\RequestManagerInterface;
+use App\Lib\Api\Destiny\Method\GetProfile;
 
 class ApiClient implements ApiClientInterface
 {
@@ -49,7 +49,7 @@ class ApiClient implements ApiClientInterface
      * @param string $membershipId
      * @param array $components
      * @return ApiResponseInterface
-     * @throws HandlerException
+     * @throws ApiException
      */
     public function getProfile(string $membershipType, string $membershipId, array $components): ApiResponseInterface
     {
@@ -61,7 +61,7 @@ class ApiClient implements ApiClientInterface
     /**
      * @param string $nickname
      * @return ApiResponseInterface
-     * @throws HandlerException
+     * @throws ApiException
      */
     public function searchPlayer(string $nickname): ApiResponseInterface
     {
@@ -96,7 +96,7 @@ class ApiClient implements ApiClientInterface
      * @param MethodInterface $request
      * @return ApiResponseInterface
      *
-     * @throws HandlerException
+     * @throws ApiException
      */
     protected function execute(MethodInterface $request): ApiResponseInterface
     {

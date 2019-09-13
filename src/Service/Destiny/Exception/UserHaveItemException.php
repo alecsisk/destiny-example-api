@@ -4,7 +4,7 @@
 namespace App\Service\Destiny\Exception;
 
 
-class UserHaveItemException
+class UserHaveItemException extends \Exception
 {
 
 }

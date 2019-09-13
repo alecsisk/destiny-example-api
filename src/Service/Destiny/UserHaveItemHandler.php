@@ -6,17 +6,16 @@ use App\Lib\Api\Destiny\ApiClientInterface;
 use App\Lib\Api\Destiny\Domain\Profile\ProfileCollectibleData;
 use App\Lib\Api\Destiny\Enum\Components;
 use App\Lib\Api\Destiny\Enum\DestinyCollectibleState;
+use App\Lib\Api\Destiny\Exception\ApiException;
 use App\Lib\Api\Destiny\Exception\CollectiblesPrivacyException;
-use App\Lib\Api\Destiny\Handler\HandlerException;
-use App\Lib\Api\Destiny\Handler\Response\CheckCollectiblesPrivacy;
+use App\Lib\Api\Destiny\Exception\NoPlayersFoundException;
+use App\Service\Destiny\Exception\UserHaveItemException;
 use App\Utils\BitmaskUtil;
 use \Exception;
 
 class UserHaveItemHandler
 {
     private $client;
-    private $nickname;
-    private $itemId;
 
 
     public function __construct(ApiClientInterface $client)
@@ -29,12 +28,10 @@ class UserHaveItemHandler
      * @param string $itemId
      *
      * @return bool
-     * @throws Exception|CollectiblesPrivacyException
+     * @throws ApiException|UserHaveItemException|Exception
      */
     public function handle(string $nickname, string $itemId): bool
     {
-        $this->nickname = $nickname;
-        $this->itemId = $itemId;
         try {
             $player = $this->apiSearchOnePlayer($nickname);
 
@@ -42,26 +39,9 @@ class UserHaveItemHandler
                 [Components::COLLECTIBLES])->getData();
 
             return $this->collectionContainItem($collectibles, $itemId);
-
-        } catch (Exception $exception) {
-            $this->handlerExceptionProcessing($exception);
+        } catch (CollectiblesPrivacyException|NoPlayersFoundException $exception) {
+            throw new UserHaveItemException($nickname . ': ' . $exception->getMessage());
         }
-        return false;
-    }
-
-
-    /**
-     * @param Exception $exception
-     * @throws Exception
-     */
-    private function handlerExceptionProcessing(HandlerException $exception): void
-    {
-        if ($exception instanceof HandlerException) {
-            if ($exception->getUniqueName() === CheckCollectiblesPrivacy::class . CheckCollectiblesPrivacy::CODE_PRIVACY_ERROR) {
-                throw new CollectiblesPrivacyException('User ' . $this->nickname . ' has private data');
-            }
-        }
-        throw new Exception('Cant check user have item: ' . $exception->getMessage());
     }
 
 
@@ -69,20 +49,14 @@ class UserHaveItemHandler
      * @param string $nickname
      * @param bool $throwErrorMoreOnePlayer
      * @return array
-     * @throws Exception
+     * @throws ApiException|Exception
      */
     private function apiSearchOnePlayer(string $nickname): array
     {
         $response = $this->client->searchPlayer($nickname)->getData();
-        $responseCount = count($response);
-
-        // TODO: в обработчики ответа?
-        if ($responseCount === 0) {
-            throw new Exception('No users found: ' . $nickname);
-        }
 
         if (count($response) > 1) {
-            throw new Exception('Found more that one player: ' . $nickname);
+            throw new UserHaveItemException('Found more that one player: ' . $nickname);
         }
 
         // first player data array

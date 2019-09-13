@@ -3,9 +3,8 @@
 namespace App\Lib\Api\Destiny\Exception;
 
 use Throwable;
-use Exception;
 
-class CollectiblesPrivacyException extends Exception
+class CollectiblesPrivacyException extends ApiException
 {
     public function __construct($message = "", $code = 0, Throwable $previous = null)
     {

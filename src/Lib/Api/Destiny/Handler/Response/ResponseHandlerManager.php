@@ -2,8 +2,10 @@
 
 namespace App\Lib\Api\Destiny\Handler\Response;
 
+use App\Lib\Api\Destiny\Exception\ApiException;
 use App\Lib\Api\Destiny\Response\ApiResponseEditInterface;
 use App\Lib\Api\Destiny\Response\ApiResponseInterface;
+use App\Lib\Http\Request\Data\RequestDataInterface;
 use App\Lib\Http\Response\ResponseDataInterface;
 
 /**
@@ -17,16 +19,16 @@ class ResponseHandlerManager implements ResponseHandlerManagerInterface
     /**
      * @var array
      */
-    private $initializeHandlers;
+    private $handlers;
 
     public function __construct($initializeHandlers = [])
     {
-        $this->initializeHandlers = $initializeHandlers;
+        $this->handlers = $initializeHandlers;
     }
 
     /**
      * @param HandlerInterface[] $handlers
-     * @throws \App\Lib\Api\Destiny\Handler\HandlerException
+     * @throws ApiException
      */
     public function run(
         array $handlers,
@@ -34,7 +36,7 @@ class ResponseHandlerManager implements ResponseHandlerManagerInterface
         ApiResponseEditInterface $formObject
     ): ApiResponseInterface {
 
-        $handlers = array_merge($this->initializeHandlers, $handlers);
+        $handlers = array_merge($this->handlers, $handlers);
 
         // no handlers - no handled data
         if (count($handlers) === 0) {

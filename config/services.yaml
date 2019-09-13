@@ -50,3 +50,10 @@ services:
     bind:
       $apiKey: '%env(string:BUNGIE_API_KEY)%'
       $apiMaxErrors: '%env(string:API_MAX_ERRORS)%'
+
+  OutputInterface:
+    class: Symfony\Component\Console\Output\ConsoleOutput
+
+  App\View\ResultOutput:
+    bind:
+      $output: '@OutputInterface'

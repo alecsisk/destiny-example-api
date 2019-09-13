@@ -1,6 +1,6 @@
 <?php
 
-namespace App\View;
+namespace App\Service\Result;
 
 class ResultFormatter
 {

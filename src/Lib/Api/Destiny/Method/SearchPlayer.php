@@ -3,7 +3,9 @@
 namespace App\Lib\Api\Destiny\Method;
 
 use App\Lib\Api\Destiny\Handler\Request\HandlerInterface as RequestHandler;
+use App\Lib\Api\Destiny\Handler\Response\CheckNoPlayersFound;
 use App\Lib\Api\Destiny\Handler\Response\MultiplePlayerHandler;
+use App\Lib\Api\Destiny\Handler\Response\NoPlayersFoundHandler;
 use App\Lib\Http\Request\Type\RequestTypeInterface;
 
 class SearchPlayer implements MethodInterface
@@ -63,6 +65,7 @@ class SearchPlayer implements MethodInterface
     {
         return [
             new MultiplePlayerHandler($this->displayName, $this->useCaseCompare),
+            new CheckNoPlayersFound(),
         ];
     }
 

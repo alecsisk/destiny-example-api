@@ -5,8 +5,9 @@ namespace App\Lib\Api\Destiny\Handler\Response;
 
 
 use App\Lib\Api\Destiny\Enum\Components;
-use App\Lib\Api\Destiny\Handler\HandlerException;
-use App\Lib\Api\Destiny\Handler\Response\BasicResponseHandler;
+use App\Lib\Api\Destiny\Exception\ApiException;
+use App\Lib\Api\Destiny\Exception\CollectiblesPrivacyException;
+use App\Lib\Api\Destiny\Exception\SerializeException;
 use App\Lib\Api\Destiny\Response\ApiResponseEditInterface;
 use App\Lib\Api\Destiny\Response\ApiResponseInterface;
 use App\Lib\Http\Response\ResponseDataInterface;
@@ -18,9 +19,6 @@ class CheckCollectiblesPrivacy extends BasicResponseHandler
      */
     private $components;
 
-    public const CODE_UNSERIALIZE_ERROR = 1;
-    public const CODE_PRIVACY_ERROR = 2;
-
     public function __construct(array $apiParamComponents)
     {
         $this->components = $apiParamComponents;
@@ -31,7 +29,7 @@ class CheckCollectiblesPrivacy extends BasicResponseHandler
      * @param ApiResponseEditInterface $data
      *
      * @return ApiResponseInterface
-     * @throws HandlerException
+     * @throws ApiException
      *
      */
     public function handle(ResponseDataInterface $response, ApiResponseEditInterface $data): ApiResponseInterface
@@ -41,7 +39,7 @@ class CheckCollectiblesPrivacy extends BasicResponseHandler
             $collections = $data->getData();
             $this->verifyData($collections);
             if ($this->isPrivacy($collections)) {
-                throw new HandlerException('data is privacy', self::class, self::CODE_PRIVACY_ERROR);
+                throw new CollectiblesPrivacyException('Player has private data');
             }
         }
         return $this->next($response, $data);
@@ -50,12 +48,12 @@ class CheckCollectiblesPrivacy extends BasicResponseHandler
 
     /**
      * @param array $data
-     * @throws HandlerException
+     * @throws ApiException
      */
     private function verifyData(array $data): void
     {
         if (!array_key_exists('profileCollectibles', $data) || !array_key_exists('characterCollectibles', $data)) {
-            throw new HandlerException('Cant unserialize collection data', self::class, self::CODE_UNSERIALIZE_ERROR);
+            throw new SerializeException('Key profileCollectibles or characterCollectibles not exists');
         }
     }
 

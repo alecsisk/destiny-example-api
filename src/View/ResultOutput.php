@@ -1,7 +1,7 @@
 <?php
 
 
-namespace App\Service\Result;
+namespace App\View;
 
 
 use Symfony\Component\Console\Helper\ProgressBar;

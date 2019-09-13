@@ -4,7 +4,12 @@
 namespace App\Lib\Api\Destiny\Exception;
 
 
-class UnknownHttpStatus
-{
+use Throwable;
 
+class HttpStatusException extends ApiException
+{
+    public function __construct($message = "", $code = 0, Throwable $previous = null)
+    {
+        parent::__construct($message, $code, $previous);
+    }
 }

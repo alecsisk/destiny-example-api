@@ -4,7 +4,7 @@
 namespace App\Lib\Api\Destiny\Exception;
 
 
-class SerializeException
+class SerializeException extends ApiException
 {
 
 }

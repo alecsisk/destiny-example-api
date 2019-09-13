@@ -4,7 +4,7 @@
 namespace App\Lib\Api\Destiny\Exception;
 
 
-class UnknownApiResponseException
+class UnknownApiResponseException extends ApiException
 {
 
 }

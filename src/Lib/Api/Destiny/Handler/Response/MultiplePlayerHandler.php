@@ -4,8 +4,7 @@
 namespace App\Lib\Api\Destiny\Handler\Response;
 
 
-use App\Lib\Api\Destiny\Handler\HandlerException;
-use App\Lib\Api\Destiny\Handler\Response\BasicResponseHandler;
+use App\Lib\Api\Destiny\Exception\ApiException;
 use App\Lib\Api\Destiny\Response\ApiResponseEditInterface;
 use App\Lib\Api\Destiny\Response\ApiResponseInterface;
 use App\Lib\Http\Response\ResponseDataInterface;
@@ -34,7 +33,7 @@ class MultiplePlayerHandler extends BasicResponseHandler
      * @param ApiResponseEditInterface $data
      *
      * @return ApiResponseInterface
-     * @throws HandlerException
+     * @throws ApiException
      *
      */
     public function handle(ResponseDataInterface $response, ApiResponseEditInterface $data): ApiResponseInterface
