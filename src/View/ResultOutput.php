@@ -1,13 +1,13 @@
 <?php
 
 
-namespace App\Command;
+namespace App\Service\Result;
 
 
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ResultOutputHelper
+class ResultOutput
 {
     /** @var OutputInterface */
     private $messages;
@@ -33,24 +33,18 @@ class ResultOutputHelper
         $this->action->write($action);
     }
 
-    public function setProgress(int $maxValue): void
+    public function setMaxProgress(int $maxValue): void
     {
         $this->progressBar->setMaxSteps($maxValue);
     }
 
-    public function updateProgress(int $currentValue, string $message = null): void
+    public function setCurrentProgress(int $currentValue, string $message = null): void
     {
         $this->progressBar->setProgress($currentValue);
 
         if (isset($message)) {
             $this->sendMessage($message);
         }
-    }
-
-
-    public function advanceProgress($step = 1): void
-    {
-        $this->progressBar->advance($step);
     }
 
     public function sendMessage(string $message): void
