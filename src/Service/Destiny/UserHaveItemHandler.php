@@ -55,6 +55,10 @@ class UserHaveItemHandler
     {
         $response = $this->client->searchPlayer($nickname)->getData();
 
+        if (is_null($response)) {
+            throw new Exception('something wrong');
+        }
+
         if (count($response) > 1) {
             throw new UserHaveItemException('Found more that one player: ' . $nickname);
         }
